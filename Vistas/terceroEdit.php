@@ -1,78 +1,11 @@
 <?php
-include_once("../Controladores/Conexion.php");
-$conexion_bd = new Conexion();
-$pdo = $conexion_bd->conn;
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    
-    // Recibimos todos los datos
-    $id = $_POST['id'];
-    $tipoDocumento = $_POST['tipoDocumento'];
-    $numeroDocumento = $_POST['numeroDocumento'];
-    $nombres = $_POST['nombres'];
-    $apellidos = $_POST['apellidos'];
-    $email = $_POST['email'];
-    $telefono = $_POST['telefono'];
-    $direccion = $_POST['direccion'];
-    $fechaNacimiento = $_POST['fechaNacimiento'];
-    $estado = $_POST['estado'];
-
-
-    $sql = "UPDATE terceros SET 
-                tipoDocumento = ?, numeroDocumento = ?, nombres = ?, 
-                apellidos = ?, email = ?, telefono = ?, 
-                direccion = ?, fechaNacimiento = ?, estado = ? 
-            WHERE 
-                id = ?"; 
-    
-    try {
-        $sentencia = $pdo->prepare($sql);
-        $sentencia->execute([
-            $tipoDocumento, $numeroDocumento, $nombres, $apellidos, 
-            $email, $telefono, $direccion, $fechaNacimiento, 
-            $estado, 
-            $id
-        ]);
-        
-        header('Location: ../index.php?status=success_update');
-        exit; 
-
-    } catch (PDOException $e) {
-        if ($e->errorInfo[1] == 2627 || $e->errorInfo[1] == 2601) {
-            header('Location: ../index.php?status=error_duplicado');
-        } else {
-            header('Location: ../index.php?status=error_db');
-        }
-        exit;
-    }
-
-} else {
-    
-    if (!isset($_GET['id'])) {
-        header('Location: ../index.php');
-        exit;
-    }
-    
-    $id = $_GET['id'];
-
-    $sql = "SELECT * FROM terceros WHERE id = ?";
-    $sentencia = $pdo->prepare($sql);
-    $sentencia->execute([$id]);
-    $tercero = $sentencia->fetch(PDO::FETCH_OBJ);
-
-    if (!$tercero) {
-        header('Location: ../index.php?status=notfound');
-        exit;
-    }
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Editar Tercero</title>
-    <link rel="stylesheet" href="../assets/styles.css">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
@@ -80,8 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="card form-card">
         <h2>Editando a: <?php echo htmlspecialchars($tercero->nombres); ?></h2>
         
-        <form action="" method="POST">
+        <form action="index.php" method="POST">
             
+            <input type="hidden" name="accion" value="actualizar">
             <input type="hidden" name="id" value="<?php echo $tercero->id; ?>">
             
             <select name="tipoDocumento" required>
@@ -104,8 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <option value="Activo" <?php if ($tercero->estado == 'Activo') echo 'selected'; ?>>Activo</option>
                 <option value="Inactivo" <?php if ($tercero->estado == 'Inactivo') echo 'selected'; ?>>Inactivo</option>
             </select>
+            
             <button type="submit">Actualizar Cambios</button>
-            <button type="submit" href="../index.php">Cancelar</button>
+            
+            <a href="index.php" class="btn-cancel" style="text-decoration:none; text-align:center; background-color:#7f8c8d; color:white; padding:12px; border-radius:6px;">Cancelar</a>
         </form>
     </div>
 </div>

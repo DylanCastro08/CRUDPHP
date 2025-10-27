@@ -1,11 +1,5 @@
 <?php
-include_once("Controladores/Conexion.php");
-
-$conexion_bd = new Conexion();
-$pdo = $conexion_bd->conn;
-
-$sentencia = $pdo->query("SELECT id, tipoDocumento, numeroDocumento, nombres, apellidos, email, telefono, estado FROM terceros ORDER BY id DESC");
-$terceros = $sentencia->fetchAll(PDO::FETCH_OBJ);
+include_once("Controladores/ControladorUsuario.php");
 ?>
 
 <!DOCTYPE html>
@@ -13,18 +7,20 @@ $terceros = $sentencia->fetchAll(PDO::FETCH_OBJ);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD</title>
-    <link rel="stylesheet" href="assets/styles.css">
+    <title>CRUD Profesional con PHP (Switch)</title>
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 
 <div class="container">
-    <h1>Gestión de Terceros</h1>
+    <h1>Gestión de Terceros (Controlador Único)</h1>
 
     <div class="card form-card">
         <h2>Registrar Nuevo Tercero</h2>
-        <form action="Controladores/terceroCreate.php" method="POST">
+        <form action="index.php" method="POST">
             
+            <input type="hidden" name="accion" value="crear">
+
             <select name="tipoDocumento" required>
                 <option value="" disabled selected>Tipo de Documento</option>
                 <option value="Cedula de Ciudadania">Cédula de Ciudadanía</option>
@@ -40,11 +36,12 @@ $terceros = $sentencia->fetchAll(PDO::FETCH_OBJ);
             <input type="text" name="telefono" placeholder="Teléfono">
             <input type="text" name="direccion" placeholder="Dirección">
             <input type="date" name="fechaNacimiento"> 
-
+            
             <select name="estado" required>
                 <option value="Activo" selected>Activo</option>
                 <option value="Inactivo">Inactivo</option>
             </select>
+
             <button type="submit">Guardar Tercero</button>
             <button type="reset" class="btn-cancel">Limpiar Campos</button>
             
@@ -77,8 +74,11 @@ $terceros = $sentencia->fetchAll(PDO::FETCH_OBJ);
                     <td><?php echo htmlspecialchars($tercero->telefono); ?></td>
                     <td><?php echo htmlspecialchars($tercero->estado); ?></td>
                     <td class="actions">
-                        <a href="Vistas/terceroEdit.php?id=<?php echo $tercero->id; ?>" class="btn-edit">Editar</a>
-                        <a href="Controladores/terceroDelete.php?id=<?php echo $tercero->id; ?>" class="btn-delete" onclick="return confirm('¿Estás seguro de que deseas eliminar este tercero?');">Eliminar</a>
+                        <a href="index.php?accion=editar&id=<?php echo $tercero->id; ?>" class="btn-edit">Editar</a>
+                        
+                        <a href="index.php?accion=eliminar&id=<?php echo $tercero->id; ?>" 
+                           class="btn-delete" 
+                           onclick="return confirm('¿Estás seguro de que deseas eliminar este tercero?');">Eliminar</a>
                     </td>
                 </tr>
                 <?php } ?>
@@ -86,6 +86,5 @@ $terceros = $sentencia->fetchAll(PDO::FETCH_OBJ);
         </table>
     </div>
 </div>
-
 </body>
 </html>
