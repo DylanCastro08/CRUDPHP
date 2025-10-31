@@ -6,6 +6,7 @@ function showAlert(message) {
 }
 
 function cargarTerceros() {
+    
     $.ajax({
         url: API_URL,
         type: 'GET',
@@ -35,6 +36,7 @@ function cargarTerceros() {
             }
         }
     });
+    
 }
 
 function resetFormulario() {
