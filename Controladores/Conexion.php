@@ -8,11 +8,21 @@ class Conexion {
 
     public function __construct() {
 
-        $host = 'IRISBOOK-DC';       
-        $dbname = 'DBCRUD';       
-        $username = 'sa';           
-        $pass = 'Dilan123';        
-        $port = 1433;
+        $ServerOption = '3';
+
+        if ($ServerOption == '1'){
+            $host = 'GEFORCE-DC';       
+            $dbname = 'DBCRUD';       
+            $username = 'sa';           
+            $pass = 'DcPc1*';        
+            $port = 1433;          
+        }else if ($ServerOption == '2'){
+            $host = 'IRISBOOK-DC';       
+            $dbname = 'DBCRUD';       
+            $username = 'sa';           
+            $pass = 'Dilan123';        
+            $port = 1433;
+        }
 
 
         try {
